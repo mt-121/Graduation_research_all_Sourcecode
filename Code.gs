@@ -27,7 +27,7 @@ function sendMail() {
   const recipientCompany = result + '様';
   const recipientName = 'GAS送信';
   const subject = '【GASメール送信】';
-  const webapplink = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+  const webapplink = "リンクを記載";
  
   const body = recipientCompany + '\n' + recipientName + '\n\n'
   + 'これは、GASでの質問ツールのリンク共有メールです。\n\n\n'
