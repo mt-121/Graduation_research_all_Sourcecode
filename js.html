@@ -1,0 +1,165 @@
+<script>
+  
+  google.script.run.withSuccessHandler(onSuccess).getsheetData();
+
+//---------------------------------------------------------------------------------
+    function onSuccess(list){
+      let data = JSON.parse(list);
+      let questionNo = 1;
+      let button_click_count_0=0,button_click_count_1=0,button_click_count_2=0,button_click_count_3=0,button_click_count_4=0;
+      const button_length = document.getElementsByTagName("button").length + 1;
+      question_display(questionNo,button_length,data);
+
+      //1つ目のボタンが押された時の処理
+      document.getElementsByTagName("button")[0].onclick = function () {
+        button_click_count_0++;
+        button_click_count_1=0;
+        button_click_count_2=0;
+        button_click_count_3=0;
+        button_click_count_4=0;        
+        if(button_click_count_0 == 1){
+          qa_speech(questionNo,data,1);
+        }
+        if(button_click_count_0 == 2){
+          questionNo = data[questionNo-1][2];
+          question_display(questionNo,button_length,data);
+          button_click_count_0 = 0;
+        }
+      }
+      //2つ目のボタンが押された時の処理
+      document.getElementsByTagName("button")[1].onclick = function () {
+        button_click_count_0=0;
+        button_click_count_1++;
+        button_click_count_2=0;
+        button_click_count_3=0;
+        button_click_count_4=0;
+        if(button_click_count_1 == 1){
+          qa_speech(questionNo,data,2);
+        }
+        if(button_click_count_1 == 2){
+          questionNo = data[questionNo-1][4];
+          question_display(questionNo,button_length,data);
+          button_click_count_0 = 0;
+        }
+      }
+      //3つ目のボタンが押された時の処理
+      document.getElementsByTagName("button")[2].onclick = function () {
+        button_click_count_0=0;
+        button_click_count_1=0;
+        button_click_count_2++;
+        button_click_count_3=0;
+        button_click_count_4=0;
+        if(button_click_count_2 == 1){
+          qa_speech(questionNo,data,3);
+        }
+        if(button_click_count_2 == 2){
+          questionNo = data[questionNo-1][6];
+          question_display(questionNo,button_length,data);
+          button_click_count_0 = 0;
+        }
+      }
+      //4つ目のボタンが押された時の処理
+      document.getElementsByTagName("button")[3].onclick = function () {
+        button_click_count_0=0;
+        button_click_count_1=0;
+        button_click_count_2=0;
+        button_click_count_3++;
+        button_click_count_4=0;
+        if(button_click_count_3 == 1){
+          qa_speech(questionNo,data,4);
+        }
+        if(button_click_count_3 == 2){
+          questionNo = data[questionNo-1][8];
+          question_display(questionNo,button_length,data);
+          button_click_count_0 = 0;
+        }
+      }
+      //5つ目のボタンが押された時の処理
+      document.getElementsByTagName("button")[4].onclick = function () {
+        button_click_count_0=0;
+        button_click_count_1=0;
+        button_click_count_2=0;
+        button_click_count_3=0;
+        button_click_count_4++;
+        if(button_click_count_4 == 1){
+          qa_speech(questionNo,data,5);
+        }
+        if(button_click_count_4 == 2){
+          questionNo = data[questionNo-1][10];
+          question_display(questionNo,button_length,data);
+          button_click_count_0 = 0;
+        }
+      }
+    }
+
+//---------------------------------------------------------------------------------
+    function question_display(questionNo,button_length,data){
+      let question_inner = "";
+      const button_span_id = [];
+      const button_input_qN = [];
+      let button_data = "";
+      let button_hidden_count=0;
+      question_inner += "<h2>";
+      question_inner +=  data[questionNo-1][1]; //[行番号][列番号（固定）]
+      question_inner += "</h2>";
+      document.getElementById("drop").innerHTML = question_inner;
+
+      for(let i=1;i<button_length;i++){
+        button_span_id[i-1] = "button" + i
+        button_data = data[questionNo-1][1+(i*2)];
+        if(button_data == ""){
+          document.getElementById('btnclick'+i).style.visibility = 'hidden'
+          button_hidden_count++;
+        }else{
+          document.getElementById('btnclick'+i).style.visibility = 'visible'
+          button_input_qN[i-1] = button_data;
+        }
+      }
+      if(button_hidden_count == button_length-1){
+          console.log("button_hidden"+button_hidden_count);
+          console.log("button_length"+button_length);
+          home_link();
+      }
+
+      for(let j=0;j<button_length-1;j++){
+        document.getElementById(button_span_id[j]).innerHTML = button_input_qN[j];
+      }
+
+      
+      const speek_out = data[questionNo-1][1];
+      let uttr = new SpeechSynthesisUtterance(speek_out)
+
+      speechSynthesis.cancel()
+      sleep(500)
+      speechSynthesis.speak(uttr)
+    }
+
+//---------------------------------------------------------------------------------
+    function qa_speech(questionNo,data,i){
+      let speek_qa_plus;
+      const speek_out_qa = data[questionNo-1][1+(i*2)];
+      speek_out_qa_plus = speek_out_qa + "が選択されています。よろしければ、もう一度タッチしてください。";
+      let uttr2 = new SpeechSynthesisUtterance(speek_out_qa_plus)
+
+      speechSynthesis.cancel()
+      sleep(500)
+      speechSynthesis.speak(uttr2)
+    }
+
+    function sleep(waitMsec) {
+      var startMsec = new Date();
+
+      // 指定ミリ秒間ループ（CPUは常にビジー）
+      while (new Date() - startMsec < waitMsec);
+    }
+//---------------------------------------------------------------------------------
+    function home_link(){
+      let link = document.getElementById('link');
+      link.style.visibility = 'visible';
+      let webapp_link="https://script.google.com/a/macros/ktc.ac.jp/s/AKfycby8SjBRVwZNlw_xY8XmG2WHHcZQgyZwzz5M3lm3LMg/dev";
+      
+      //href属性の値を書き換える
+      link.setAttribute('href', webapp_link);
+
+    }
+</script>
